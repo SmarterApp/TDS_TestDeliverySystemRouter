@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "zone": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "proctorUrl": {
+            "type": "string"
+          },
+          "studentUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "proctor": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "route": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "zone": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

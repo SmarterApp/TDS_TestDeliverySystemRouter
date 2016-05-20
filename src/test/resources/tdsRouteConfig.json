@@ -1,0 +1,34 @@
+{
+  "zone": [
+    {
+      "key": "A",
+      "description": "TDS Zone A",
+      "proctorUrl": "http://localhost:8181",
+      "studentUrl": "http://localhost:8484/student/"
+    },
+    {
+      "key": "B",
+      "description": "TDS Zone B",
+      "proctorUrl": "http://localhost:8282",
+      "studentUrl": "http://localhost:8484/student/"
+    }
+  ],
+  "proctor": [
+    {
+      "role": "Test Administrator",
+      "level": "INSTITUTION"
+    }
+  ],
+  "route": [
+    {
+      "field": "InstitutionID",
+      "id": "orbendhs",
+      "zone": "A"
+    },
+    {
+      "field": "DistrictID",
+      "id": "districtB",
+      "zone": "B"
+    }
+  ]
+}

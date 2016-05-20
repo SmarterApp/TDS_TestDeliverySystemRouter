@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+    <link href="../../static/css/student.css"
+          th:href="@{css/student.css}" rel="stylesheet" media="screen"/>
+</head>
+<body>
+<div class="container">
+
+    <form class="form-signin" action="#" th:action="@{/student}" th:object="${studentLogin}" method="post">
+        <img src="images/logo_sbac.png" class="img-responsive" alt="" />
+        <h2 class="form-signin-heading">Please sign in</h2>
+
+        <div class="input-group">
+
+            <span class="input-group-addon"><strong>Session Id: </strong></span>
+
+            <input id="sessionPart1" type="text" class="form-control" th:field="*{sessionPart1}"/>
+            <span class="input-group-addon">-</span>
+
+            <input id="sessionPart2" type="text" class="form-control" th:field="*{sessionPart2}"/>
+            <span class="input-group-addon">-</span>
+
+            <input id="sessionPart3" type="text" class="form-control" th:field="*{sessionPart3}"/>
+
+        </div>
+
+        <div class="checkbox"></div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
