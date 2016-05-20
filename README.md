@@ -25,7 +25,34 @@ After entering the session id the router uses the first character of the session
 
 ## Configuration
 
+### Routing
+The router config file is in src/main/resources/tdsRouteConfig.json
+
+This file defines the Zones, Roles used by Proctors and Tenancy Chain routing rules.
+
+### SAML
+
+The router needs a SAML keystore in /opt/sbtds/tds-router/tdsRouterSamlKeystore.jks
+
+This SAML Configuration needs to be added to the OpenAM circle of trust.  Similar to the setup used for other TDS components.  The router will authenticate the proctor with this SAML configuration.
+
 ## Build
 
+Java 8 and Maven are required to build the tds-router.  
+
+Maven Build:
+
+```
+#!bash
+
+mvn clean package
+```
 
 ## Run
+
+
+```
+#!bash
+
+java -jar target/tds-router-1.0.0.RELEASE.jar
+```
