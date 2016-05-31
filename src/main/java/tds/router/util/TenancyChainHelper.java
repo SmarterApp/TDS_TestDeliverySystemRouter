@@ -13,7 +13,10 @@
 
 package tds.router.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.saml.SAMLCredential;
+import tds.router.controllers.ProctorController;
 import tds.router.domain.TenancyChain;
 import tds.router.generated.Proctor;
 import tds.router.generated.Route;
@@ -29,42 +32,62 @@ public class TenancyChainHelper {
 
     private static final String SBAC_TENANCY_ATTRIBUTE_NAME = "sbacTenancyChain";
 
+    private static final Logger logger = LoggerFactory.getLogger(ProctorController.class);
+
 
     public static String routeUser(SAMLCredential credential, TdsRouteConfig tdsRouteConfig) {
 
         // Get a list of proctor role chains
         String[] tenancyList = credential.getAttributeAsStringArray(SBAC_TENANCY_ATTRIBUTE_NAME);
+
         List<TenancyChain> tenancyChains = createTenancyChains(tenancyList);
         List<TenancyChain> proctorChains = filterProctors(tenancyChains, tdsRouteConfig.getProctor());
 
         Route route = routeProctorByZone(proctorChains, tdsRouteConfig.getRoute());
+        Zone zone = getZoneFromRoute(route, tdsRouteConfig.getZone());
 
-        String fullUrl = tdsRouteConfig.getZone().get(0).getProctorUrl();
-        return fullUrl;
+        if (zone != null) {
+            logger.info("Routing proctor to zone: {} with URL: {} ", zone.getKey(), zone.getProctorUrl());
+            return zone.getProctorUrl();
+        } else {
+            logger.warn("Using default route for proctor to zone: {} with URL: {} ", tdsRouteConfig.getZone().get(0).getKey(), tdsRouteConfig.getZone().get(0).getProctorUrl());
+            return tdsRouteConfig.getZone().get(0).getProctorUrl();
+        }
+
     }
 
-    /**
-     * Route is checked in order of the JSON array of routes.
-     *
-     * @param proctorChains Tenancy Chains that meet the proctor definition for this user
-     * @param routes The route rules in order
-     * @return The first Zone found for this user.
-     */
-    private static Route routeProctorByZone(List<TenancyChain> proctorChains, List<Route> routes) {
+    private static Zone getZoneFromRoute(Route route, List<Zone> zones) {
 
-        for ( Route route : routes ) {
-            for (TenancyChain chain : proctorChains) {
-                if ( route.getField().equalsIgnoreCase("InstitutionID") && route.getId().equalsIgnoreCase(chain.getInstitutionID()) ) {
-                    return route;
-                } else if ( route.getField().equalsIgnoreCase("DistrictID") && route.getId().equalsIgnoreCase(chain.getDistrictID())  ) {
-                    return route;
+        if (route != null) {
+            for (Zone zone : zones) {
+                if (zone.getKey().equalsIgnoreCase(route.getZone())) {
+                    return zone;
                 }
             }
         }
         return null;
     }
 
+    /**
+     * Route is checked in order of the JSON array of routes.
+     *
+     * @param proctorChains Tenancy Chains that meet the proctor definition for this user
+     * @param routes        The route rules in order
+     * @return The first Zone found for this user.
+     */
+    private static Route routeProctorByZone(List<TenancyChain> proctorChains, List<Route> routes) {
 
+        for (Route route : routes) {
+            for (TenancyChain chain : proctorChains) {
+                if (route.getField().equalsIgnoreCase("InstitutionID") && route.getId().equalsIgnoreCase(chain.getInstitutionID())) {
+                    return route;
+                } else if (route.getField().equalsIgnoreCase("DistrictID") && route.getId().equalsIgnoreCase(chain.getDistrictID())) {
+                    return route;
+                }
+            }
+        }
+        return null;
+    }
 
     private static List<TenancyChain> createTenancyChains(String[] names) {
         return Arrays.asList(names).stream()
@@ -76,10 +99,10 @@ public class TenancyChainHelper {
 
         List<TenancyChain> proctorChains = new ArrayList<>();
 
-        for ( Proctor proctor : proctors) {
+        for (Proctor proctor : proctors) {
 
-            for ( TenancyChain tenancyChain : chains ) {
-                if ( proctor.getRole().equalsIgnoreCase(tenancyChain.getName()) && proctor.getLevel().equalsIgnoreCase(tenancyChain.getLevel()))  {
+            for (TenancyChain tenancyChain : chains) {
+                if (proctor.getRole().equalsIgnoreCase(tenancyChain.getName()) && proctor.getLevel().equalsIgnoreCase(tenancyChain.getLevel())) {
                     proctorChains.add(tenancyChain);
                 }
             }

@@ -13,38 +13,26 @@
 
 package tds.router.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.saml.SAMLCredential;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import tds.router.generated.Proctor;
 import tds.router.services.RouterConfigService;
 import tds.router.stereotypes.CurrentUser;
 import tds.router.util.TenancyChainHelper;
 
-import java.util.List;
-
 @Controller
 public class ProctorController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ProctorController.class);
 
     @Autowired
     RouterConfigService routerConfigService;
 
 
     @RequestMapping("/proctor")
-    public String landing(@CurrentUser SAMLCredential credential, Model model) {
+    public String landing(@CurrentUser SAMLCredential credential) {
 
-        List<Proctor> proctorList = routerConfigService.getTdsRouteConfig().getProctor();
-
-        //routeUser(credential);
         String zoneUrl = TenancyChainHelper.routeUser(credential, routerConfigService.getTdsRouteConfig());
 
-        logger.info("Routing proctor user to: " + zoneUrl);
         return "redirect:" + zoneUrl;
     }
 
