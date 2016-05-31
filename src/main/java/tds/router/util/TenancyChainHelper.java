@@ -17,8 +17,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import tds.router.domain.TenancyChain;
 import org.springframework.security.saml.SAMLCredential;
+import tds.router.domain.TenancyChain;
 import tds.router.generated.TdsRouteConfig;
 
 import java.util.ArrayList;

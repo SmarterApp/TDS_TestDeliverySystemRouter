@@ -1,13 +1,23 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-    <head>
-        <title>Login Error</title>
-    </head>
-    <body>
-        <h1>Sorry, we have a problem</h1>
-        <p>
-        	Please try again.
-        </p>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+            th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+    <link href="../../static/css/student.css"
+          th:href="@{css/student.css}" rel="stylesheet" media="screen"/>
+</head>
+<body>
+
+<div class="container">
+        <img src="images/logo_sbac.png" class="img-responsive" alt="" />
+        <h2>Sorry there is a problem</h2>
+</div>
+
+</body>
 </html>
