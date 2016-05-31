@@ -17,24 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.saml.SAMLCredential;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import tds.router.services.RouterConfigService;
+import tds.router.services.ProctorRouteService;
 import tds.router.stereotypes.CurrentUser;
-import tds.router.util.TenancyChainHelper;
 
 @Controller
 public class ProctorController {
 
     @Autowired
-    RouterConfigService routerConfigService;
-
+    ProctorRouteService proctorRouteService;
 
     @RequestMapping("/proctor")
     public String landing(@CurrentUser SAMLCredential credential) {
 
-        String zoneUrl = TenancyChainHelper.routeUser(credential, routerConfigService.getTdsRouteConfig());
+        String zoneUrl = proctorRouteService.routeProctor(credential);
 
         return "redirect:" + zoneUrl;
     }
-
 
 }

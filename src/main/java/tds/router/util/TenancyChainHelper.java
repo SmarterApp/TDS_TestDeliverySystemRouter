@@ -15,12 +15,10 @@ package tds.router.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.saml.SAMLCredential;
 import tds.router.controllers.ProctorController;
 import tds.router.domain.TenancyChain;
 import tds.router.generated.Proctor;
 import tds.router.generated.Route;
-import tds.router.generated.TdsRouteConfig;
 import tds.router.generated.Zone;
 
 import java.util.ArrayList;
@@ -30,33 +28,9 @@ import java.util.stream.Collectors;
 
 public class TenancyChainHelper {
 
-    private static final String SBAC_TENANCY_ATTRIBUTE_NAME = "sbacTenancyChain";
-
     private static final Logger logger = LoggerFactory.getLogger(ProctorController.class);
 
-
-    public static String routeUser(SAMLCredential credential, TdsRouteConfig tdsRouteConfig) {
-
-        // Get a list of proctor role chains
-        String[] tenancyList = credential.getAttributeAsStringArray(SBAC_TENANCY_ATTRIBUTE_NAME);
-
-        List<TenancyChain> tenancyChains = createTenancyChains(tenancyList);
-        List<TenancyChain> proctorChains = filterProctors(tenancyChains, tdsRouteConfig.getProctor());
-
-        Route route = routeProctorByZone(proctorChains, tdsRouteConfig.getRoute());
-        Zone zone = getZoneFromRoute(route, tdsRouteConfig.getZone());
-
-        if (zone != null) {
-            logger.info("Routing proctor to zone: {} with URL: {} ", zone.getKey(), zone.getProctorUrl());
-            return zone.getProctorUrl();
-        } else {
-            logger.warn("Using default route for proctor to zone: {} with URL: {} ", tdsRouteConfig.getZone().get(0).getKey(), tdsRouteConfig.getZone().get(0).getProctorUrl());
-            return tdsRouteConfig.getZone().get(0).getProctorUrl();
-        }
-
-    }
-
-    private static Zone getZoneFromRoute(Route route, List<Zone> zones) {
+    public static Zone getZoneFromRoute(Route route, List<Zone> zones) {
 
         if (route != null) {
             for (Zone zone : zones) {
@@ -75,7 +49,7 @@ public class TenancyChainHelper {
      * @param routes        The route rules in order
      * @return The first Zone found for this user.
      */
-    private static Route routeProctorByZone(List<TenancyChain> proctorChains, List<Route> routes) {
+    public static Route routeProctorByZone(List<TenancyChain> proctorChains, List<Route> routes) {
 
         for (Route route : routes) {
             for (TenancyChain chain : proctorChains) {
@@ -89,13 +63,13 @@ public class TenancyChainHelper {
         return null;
     }
 
-    private static List<TenancyChain> createTenancyChains(String[] names) {
+    public static List<TenancyChain> createTenancyChains(String[] names) {
         return Arrays.asList(names).stream()
                 .map(TenancyChain::new)
                 .collect(Collectors.toList());
     }
 
-    private static List<TenancyChain> filterProctors(List<TenancyChain> chains, List<Proctor> proctors) {
+    public static List<TenancyChain> filterProctors(List<TenancyChain> chains, List<Proctor> proctors) {
 
         List<TenancyChain> proctorChains = new ArrayList<>();
 
