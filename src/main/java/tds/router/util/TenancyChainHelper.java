@@ -13,13 +13,12 @@
 
 package tds.router.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import org.springframework.security.saml.SAMLCredential;
 import tds.router.domain.TenancyChain;
+import tds.router.generated.Proctor;
+import tds.router.generated.Route;
 import tds.router.generated.TdsRouteConfig;
+import tds.router.generated.Zone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,71 +32,59 @@ public class TenancyChainHelper {
 
     public static String routeUser(SAMLCredential credential, TdsRouteConfig tdsRouteConfig) {
 
+        // Get a list of proctor role chains
+        String[] tenancyList = credential.getAttributeAsStringArray(SBAC_TENANCY_ATTRIBUTE_NAME);
+        List<TenancyChain> tenancyChains = createTenancyChains(tenancyList);
+        List<TenancyChain> proctorChains = filterProctors(tenancyChains, tdsRouteConfig.getProctor());
 
-        String[] tenancyNames = credential.getAttributeAsStringArray(SBAC_TENANCY_ATTRIBUTE_NAME);
-
-        List<String> nameList = new ArrayList<String>(Arrays.asList(tenancyNames));
-
-        getByStream(tenancyNames);
-
-        //List<TenancyChain> chainList = createInsertsList(nameList);
-
-        //Optional<TenancyChain> proctorChain = getFirstProctorTenancyChain(nameList);
+        Route route = routeProctorByZone(proctorChains, tdsRouteConfig.getRoute());
 
         String fullUrl = tdsRouteConfig.getZone().get(0).getProctorUrl();
         return fullUrl;
-
     }
 
+    /**
+     * Route is checked in order of the JSON array of routes.
+     *
+     * @param proctorChains Tenancy Chains that meet the proctor definition for this user
+     * @param routes The route rules in order
+     * @return The first Zone found for this user.
+     */
+    private static Route routeProctorByZone(List<TenancyChain> proctorChains, List<Route> routes) {
 
-    public static java.util.function.Function<String, TenancyChain> tenancyChainFromSaml = new java.util.function.Function<String, TenancyChain>() {
-
-        public TenancyChain apply(String t) {
-            TenancyChain tenancyChain = new TenancyChain(t);
-            return tenancyChain;
+        for ( Route route : routes ) {
+            for (TenancyChain chain : proctorChains) {
+                if ( route.getField().equalsIgnoreCase("InstitutionID") && route.getId().equalsIgnoreCase(chain.getInstitutionID()) ) {
+                    return route;
+                } else if ( route.getField().equalsIgnoreCase("DistrictID") && route.getId().equalsIgnoreCase(chain.getDistrictID())  ) {
+                    return route;
+                }
+            }
         }
-    };
-
-    public static List<TenancyChain> getByStream(String[] tnames) {
-
-        String role = "Test Admininistrator";
-
-
-        List<TenancyChain> tenancyChainList = Arrays.asList(tnames).stream()
-                .map(tenancyChainFromSaml)
-                .collect(Collectors.<TenancyChain>toList());
-
-        return tenancyChainList;
-
+        return null;
     }
 
 
-    // Return optional chain
-    public static Optional<TenancyChain> getFirstProctorTenancyChain(List<String> nameList) {
 
-        String role = "Test Admininistrator";
-
-        Function<String, TenancyChain> transform = new Function<String, TenancyChain>() {
-            @Override
-            public TenancyChain apply(String input) {
-                return new TenancyChain(input);
-            }
-        };
-
-        Predicate<TenancyChain> predicate = new Predicate<TenancyChain>() {
-            @Override
-            public boolean apply(TenancyChain input) {
-                return input != null && input.getName().equals(role);
-            }
-        };
-
-        return FluentIterable
-                .from(nameList)
-                .transform(transform)
-                .filter(predicate)
-                .first();
-
+    private static List<TenancyChain> createTenancyChains(String[] names) {
+        return Arrays.asList(names).stream()
+                .map(TenancyChain::new)
+                .collect(Collectors.toList());
     }
 
+    private static List<TenancyChain> filterProctors(List<TenancyChain> chains, List<Proctor> proctors) {
+
+        List<TenancyChain> proctorChains = new ArrayList<>();
+
+        for ( Proctor proctor : proctors) {
+
+            for ( TenancyChain tenancyChain : chains ) {
+                if ( proctor.getRole().equalsIgnoreCase(tenancyChain.getName()) && proctor.getLevel().equalsIgnoreCase(tenancyChain.getLevel()))  {
+                    proctorChains.add(tenancyChain);
+                }
+            }
+        }
+        return proctorChains;
+    }
 
 }

@@ -29,6 +29,10 @@ public class TenancyChainHelperTests {
             "|orbendhs|Reporting PII|INSTITUTION|98765|fairwaytech|||OR|OREGON|||orbend001|BendDistrict|||orbendhs|BendHigh|",
             "|orbendhs|Test Admininistrator|INSTITUTION|98765|fairwaytech|||OR|OREGON|||orbend001|BendDistrict|||orbendhs|BendHigh|"};
 
+    /*
+    |districttA|District Coordinator|DISTRICT|98765|fairwaytech|||OR|OREGON|||districttA|A District|||||
+    |districttA|Reporting PII|DISTRICT|98765|fairwaytech|||OR|OREGON|||districttA|A District|||||
+     */
 
     @Test
     public void loadChainFromFile() throws IOException {

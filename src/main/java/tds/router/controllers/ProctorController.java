@@ -43,8 +43,8 @@ public class ProctorController {
 
         //routeUser(credential);
         String zoneUrl = TenancyChainHelper.routeUser(credential, routerConfigService.getTdsRouteConfig());
-        logger.info("Routing user to: " + zoneUrl);
 
+        logger.info("Routing proctor user to: " + zoneUrl);
         return "redirect:" + zoneUrl;
     }
 
